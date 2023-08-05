@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rdata
+.httr-oauth
+.DS_Store
+
+.quarto
+/.quarto/
+
+# prevent upload of sensitive data
+data/*.rds
+*_cache
