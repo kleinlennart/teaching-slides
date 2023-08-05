@@ -1,0 +1,4 @@
+- source: data-viz-II.qmd
+  quarto-pub:
+    - id: a469d8e7-2b39-4a15-bd9c-d4f28b7d7c8f
+      url: 'https://kleinbutsignificant.quarto.pub/data-viz-ii'

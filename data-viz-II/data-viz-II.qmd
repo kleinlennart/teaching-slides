@@ -1,0 +1,356 @@
+---
+title: "Data Visualization II"
+subtitle: "How to make publication-ready plots"
+date: "26. July, 2023"
+date-format: "MMM D, YYYY"
+author: "Lennart Klein & Prof. Dr. Christian Fischer"
+institute: "University of Tübingen"
+slug: "data-viz-ii"
+footer: "🔗 [kleinbutsignificant.quarto.pub/data-viz-ii](https://kleinbutsignificant.quarto.pub/data-viz-ii) | 📦 [github.com/kleinlennart/teaching-slides](https://github.com/kleinlennart/teaching-slides)"
+# title-slide-attributes: 
+#   data-footer: "CC BY-SA"
+# include-after-body: add-custom-footer.html
+format: 
+  revealjs:
+    keep-md: false
+    # https://quarto.org/docs/reference/formats/presentations/revealjs.html
+    # width: 
+    # height:
+    # bibliography: 
+    embed-resources: true
+    transition: none
+    transition-speed: fast
+    incremental: false
+    controls-tutorial: true
+    fig-align: center
+    fig-format: svg
+    logo: ../images/logo.svg
+    slide-number: c
+    code-line-numbers: true
+    code-copy: hover
+    code-link: true
+    code-tools: true
+    preview-links: false
+    # preload-iframes: true
+    theme: [custom.scss]
+    # css: styles.css
+    # https://quarto.org/docs/journals/templates.html#revealjs-partials
+    # https://github.com/quarto-dev/quarto-cli/tree/main/src/resources/formats/revealjs/pandoc
+    # template: 
+    template-partials:
+      - partials/title-slide.html
+
+# template.html can't be replaced as partial, use 'template:' instead
+
+# metadata.html
+# title-block.html
+# toc.html
+# toc-slide.html
+# title-slide.html      
+# styles.html
+    
+from: markdown+emoji
+execute:
+  freeze: auto
+  cache: true
+  echo: true
+  warning: false
+  error: false
+---
+
+```{r setup}
+#| include: false
+
+library(tidyverse)
+```
+
+# The Basics :seedling:
+
+## The Grammar of Graphics
+
+```r
+data %>% 
+  ggplot(mapping = aes(<MAPPINGS>)) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>), 
+                  stat = <STAT>, 
+                  position = <POSITION>) + 
+  <COORDINATE_FUNCTION> + 
+  <FACET_FUNCTION> + 
+  <SCALE_FUNCTION> + 
+  <THEME_FUNCTION>
+```
+
+::: aside
+See [r4ds.hadley.nz/data-visualize.html](https://r4ds.hadley.nz/data-visualize.html)
+:::
+
+# From Data to Viz :chart_with_upwards_trend:
+
+## Planning {.incremental}
+
+-   **Number of Variables** (1, 2, 3, ...)
+
+-   **Type of Variables** (Discrete, Continuous, Time)
+
+-   **Kind of Visualization** (e.g., Distribution, Relationship, Change, etc.)
+
+\
+
+-   **➡ What's the goal of your visualization? What do you want to show?**
+
+## Choose your Plot Type / Geom
+
+-   [data-to-viz.com/](https://www.data-to-viz.com/)
+
+-   [r-graph-gallery.com/](https://r-graph-gallery.com/)
+
+-   [ggplot2.tidyverse.org/](https://ggplot2.tidyverse.org/)
+
+-   [ggplot2-book.org/individual-geoms.html](https://ggplot2-book.org/individual-geoms.html) :books:
+
+# Styling Tipps :sparkles:
+
+## Example Data
+
+```{r data}
+# pak::pkg_install("tidyverse")
+library(tidyverse)
+
+dat <- readRDS(here::here("data", "TWLZ_Seminar_Sample.rds"))
+```
+
+## Example I
+
+```{r example I}
+dat %>%
+  ggplot(aes(x = is_teacher, fill = is_original)) +
+  geom_bar() +
+  labs(x = NULL, y = "Frequency") +
+  scale_x_discrete(labels = c("Non-teacher", "Teacher"))
+```
+
+## Example I: Custom Bar Width
+
+```{r}
+#| code-line-numbers: "3"
+dat %>%
+  ggplot(aes(x = is_teacher, fill = is_original)) +
+  geom_bar(width = 0.5) + # between 1.0 - 0.0
+  labs(x = NULL, y = "Frequency") +
+  scale_x_discrete(labels = c("Non-teacher", "Teacher"))
+```
+
+## Example I: Better Scales
+
+```{r}
+#| code-line-numbers: "6"
+dat %>%
+  ggplot(aes(x = is_teacher, fill = is_original)) +
+  geom_bar(width = 0.5) + # between 1.0 - 0.0
+  labs(x = NULL, y = "Frequency") +
+  scale_x_discrete(labels = c("Non-teacher", "Teacher")) +
+  scale_y_continuous(labels = scales::label_comma()) # scales::label_XYZ()
+```
+
+## Example I: Custom Legend
+
+```{r}
+#| code-line-numbers: "7,8"
+dat %>%
+  ggplot(aes(x = is_teacher, fill = is_original)) +
+  geom_bar(width = 0.5) + # between 1.0 - 0.0
+  labs(x = NULL, y = "Frequency") +
+  scale_x_discrete(labels = c("Non-teacher", "Teacher")) +
+  scale_y_continuous(labels = scales::label_comma()) +
+  scale_fill_discrete("Original") + # Legend Title
+  theme(legend.position = "bottom") # Legend Position
+```
+
+<!--#  #################################################################### -->
+
+## Example II
+
+```{r}
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se")
+```
+
+## Example II: Custom Axis Labels
+
+```{r}
+#| code-line-numbers: "4"
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se") +
+  labs(x = NULL, y = "Retweet count") # NULL removes the axis
+```
+
+## Example II: Custom Axis Breaks
+
+```{r}
+#| code-line-numbers: "5"
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se") +
+  labs(x = NULL, y = "Retweet count") + # NULL removes the axis
+  scale_x_discrete(breaks = seq(2008, 2020, 2))
+```
+
+## Example II: `theme_apa()`
+
+```{r}
+#| code-line-numbers: "1,7"
+# install.packages(papaya)
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se") +
+  labs(x = NULL, y = "Retweet count") +
+  scale_x_discrete(breaks = seq(2008, 2020, 2)) +
+  papaja::theme_apa(base_size = 16) # base_size = size of all fonts
+```
+
+## Example II: Custom Theming
+
+-   create a standard theme to reuse for all plots
+
+```{r}
+custom_theming <- theme(
+  axis.text = element_text(color = "black"),
+  axis.title = element_text(color = "black")
+  # add other
+)
+```
+
+## Example II: Custom Theming
+
+```{r}
+#| code-line-numbers: "7"
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se") +
+  labs(x = NULL, y = "Retweet count") +
+  scale_x_discrete(breaks = seq(2008, 2020, 2)) +
+  papaja::theme_apa(base_size = 16) +
+  custom_theming
+```
+
+## Example II: Before
+
+```{r example II comparison}
+#| echo: false
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se")
+```
+
+## Example II: After
+
+```{r}
+#| echo: false
+dat %>%
+  ggplot(aes(x = year, y = retweet_count)) +
+  stat_summary(fun.data = "mean_se") +
+  labs(x = NULL, y = "Retweet count") + # NULL removes the axis
+  scale_x_discrete(breaks = seq(2008, 2020, 2)) +
+  papaja::theme_apa(base_size = 16) + # base_size = size of all fonts
+  custom_theming
+```
+
+<!--# ######################################## -->
+
+## **Colorblind**-**friendly** palettes
+
+-   `ggplot2` default color palette
+
+```{r}
+colorBlindness::displayAllColors(scales::hue_pal()(5))
+```
+
+## **Colorblind**-**friendly** palettes
+
+-   alternative `viridis` color palette
+
+```{r}
+colorBlindness::displayAllColors(viridis::viridis_pal()(5))
+```
+
+## **Colorblind**-**friendly** palettes
+
+<!-- palette.colors() -->
+
+-   or the **Okabe-Ito (2008)** color palette
+
+```{r}
+# pak::pkg_install("clauswilke/colorblindr")
+colorBlindness::displayAllColors(colorblindr::palette_OkabeIto_black)
+```
+
+## **Colorblind**-**friendly** palettes
+
+-   accessible as `scale_` functions for `color` and `fill`
+
+```{r}
+#| echo: true
+#| eval: false
+
+scale_color_viridis_d() # discrete
+scale_color_viridis_c() # continous
+
+scale_fill_viridis_d() # discrete
+scale_fill_viridis_c() # continous
+```
+
+# Export :rocket:
+
+## Export Formats
+
+-   `.png` (Google Docs)
+-   `.pdf` (Word, LaTeX)
+
+```{r}
+#| eval: false
+#| echo: true
+# saves the last plot
+ggsave("plots/plot1.png",
+  width = 12, height = 10, units = "cm",
+  dpi = 600, pointsize = 12
+) # 'dpi' based on journal guidelines
+```
+
+\
+
+```{r}
+#| eval: false
+#| echo: true
+ggsave("plots/plot1.pdf",
+  width = 12, height = 10, units = "cm",
+  family = "serif", # font family: "serif" or "sans"
+  pointsize = 12
+) # size of font (should be the same as paper)
+```
+
+::: aside
+e.g., for *AERA Open*: [journals.sagepub.com/author-instructions/ero](https://journals.sagepub.com/author-instructions/ero)
+:::
+
+## Adjusting Plot Sizes {.smaller}
+
+Use `ggview()` from the [`{ggview}`](https://github.com/idmn/ggview) package to quickly adjust plot sizes.
+
+![](../images/ggview.gif){width="800"}
+
+::: aside
+```{r}
+#| eval: false
+#| echo: true
+pak::pkg_install("idmn/ggview")
+```
+:::
+
+# Housekeeping :house_with_garden:
+
+## Summer Break Office Hours
+
+-   **Lennart's Zoom Office Hours**, once a week
+

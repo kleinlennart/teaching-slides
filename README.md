@@ -15,6 +15,8 @@
 
 ## Styling
 
+- https://quarto.org/docs/output-formats/html-themes.html
+
 - https://quarto.org/docs/visual-editor/content.html#css-styles
 
 - https://github.com/quarto-dev/quarto-cli/discussions/2073
