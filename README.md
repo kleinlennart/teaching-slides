@@ -3,6 +3,10 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+- [Data Visualization II](https://kleinbutsignificant.quarto.pub/data-viz-ii/) ✨
+
+
+---
 
 ## Quarto revealjs
 
